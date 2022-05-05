@@ -228,7 +228,7 @@ class GUI:
     def imageButton(self, msg):
         self.my_msg = msg
         
-        self.imageviewer = Tk()
+        self.imageviewer = Toplevel()
         self.imageviewer.title('Image Viewer')
         self.imageviewer.iconbitmap('desktop/ICS-final/ICS-final/chat_system_gui')
         
@@ -238,6 +238,15 @@ class GUI:
         my_image = ImageTk.PhotoImage(Image.open(self.imageviewer.filename))
         my_image_label = Label(self.imageviewer,image=my_image).pack()
         #self.sendButton(my_image_label)
+        self.buttonMsg = Button(self.imageviewer,
+                                text="Send image",
+                                font="Helvetica 10 bold",
+                                width=20,
+                                bg="#ABB2B9",
+                                command=lambda: self.sendImage(my_image)).pack()
+
+    def sendImage(self,my_image):
+        pass
         
 
     #m------------------------------
