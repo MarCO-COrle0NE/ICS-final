@@ -190,14 +190,14 @@ class GUI:
                                 font="Helvetica 10 bold",
                                 width=20,
                                 bg="#ABB2B9",
-                                command=self.imageButton())
+                                command=lambda: self.imageButton(self.entryMsg.get()))
 
         self.buttonImage.place(relx=0.55,
                              rely=0.008,
                              relheight=0.06,
                              relwidth=0.22)
         #m------------------------------
-        
+
         self.textCons.config(cursor="arrow")
 
         # create a scroll bar
@@ -225,17 +225,19 @@ class GUI:
         self.textCons.see(END)
 
     #m------------------------------
-    def imageButton(self):
+    def imageButton(self, msg):
+        self.my_msg = msg
+        
         self.imageviewer = Tk()
         self.imageviewer.title('Image Viewer')
         self.imageviewer.iconbitmap('desktop/ICS-final/ICS-final/chat_system_gui')
         
-        #global my_image
+        global my_image
         self.imageviewer.filename = filedialog.askopenfilename(initialdir="/images", title="Select A File", filetypes=(("jpg files", "*.jpg"),("all files", "*.*")))
         #my_label = Label(imageviewer, text=self.imageviewer.filename).pack()
         my_image = ImageTk.PhotoImage(Image.open(self.imageviewer.filename))
-        my_image_label = Label(image=my_image)
-        self.sendButton(my_image_label)
+        my_image_label = Label(self.imageviewer,image=my_image).pack()
+        #self.sendButton(my_image_label)
         
 
     #m------------------------------
