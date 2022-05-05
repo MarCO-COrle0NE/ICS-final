@@ -2,13 +2,6 @@ import tkinter
 from tkinter import *
 from tkinter import messagebox
 
-class Game:
-    def __init__(self):
-        self.root=Tk()
-        self.root.title("Tic Tac Toe 2.0")
-        self.root.geometry("450x700")
-        self.clicked=True
-        self.count=0 #可能要改成oop
 root=Tk()
 root.title("Tic Tac Toe 2.0")
 root.geometry("450x700")
@@ -35,8 +28,8 @@ def root1_b_medium_click(b):
     if dict_x["xx"]==0:
         messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
     else:
-        b["text"] = "xxx"
-        dict_x["xxx"] -= 1
+        b["text"] = "xx"
+        dict_x["xx"] -= 1
         clicked = False
         count += 1
         check_if_win()
@@ -54,8 +47,42 @@ def root1_b_big_click(b):
         check_if_win()
         if winner:
             messagebox.showinfo("Game over!", "Congratulation! x wins!")  # 可能要把x变成player的名字
-
-
+def root2_b_small_click(b):
+    global clicked,winner,count
+    if dict_o["o"]==0:
+        messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
+    else:
+        b["text"] = "o"
+        dict_o["o"] -= 1
+        clicked = True
+        count += 1
+        check_if_win()
+        if winner:
+            messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把x变成player的名字
+def root2_b_medium_click(b):
+    global clicked,winner,count
+    if dict_o["oo"]==0:
+        messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
+    else:
+        b["text"] = "oo"
+        dict_o["oo"] -= 1
+        clicked = True
+        count += 1
+        check_if_win()
+        if winner:
+            messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把o变成player的名字
+def root2_b_big_click(b):
+    global clicked,winner,count
+    if dict_o["ooo"]==0:
+        messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
+    else:
+        b["text"] = "ooo"
+        dict_o["ooo"] -= 1
+        clicked = True
+        count += 1
+        check_if_win()
+        if winner:
+            messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把o变成player的名字
 
 
 
@@ -196,7 +223,7 @@ def check_if_win():
         winner = True
         count += 1
         disable_all_buttons()
-    if count==27 and winner==False:
+    if count==27 and winner==False:# tie 的条件有问题
         messagebox.showinfo("Tic Tac Toe 2.0","It's a tie!\nNobody wins the game!")
         disable_all_buttons()
 
@@ -328,9 +355,24 @@ def button_click(b):
         root1_name_label.grid(row=0,column=1)
         root1_name_label1.grid(row=1,column=1)
 
-        b_small=Button(root1,text="x",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=root1_b_small_click(b))
+        b_small=Button(root1,text="x",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda: root1_b_small_click(b))
         b_medium=Button(root1,text="xx",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : root1_b_medium_click(b))
         b_big=Button(root1,text="xxx",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : root1_b_big_click(b))
+
+        b_small.grid(row=2, column=0)
+        b_medium.grid(row=2, column=1)
+        b_big.grid(row=2, column=2)
+    elif clicked==False and b["text"]=='':
+        root2=Tk()
+        root2.title("Choose one piece!")
+        root2_name_label = tkinter.Label(root2, text="Click the corresponding Button of the piece you want to choose!")
+        root2_name_label1=tkinter.Label(root2, text="Please close the window after the selected piece is shown!")
+        root2_name_label.grid(row=0,column=1)
+        root2_name_label1.grid(row=1,column=1)
+
+        b_small=Button(root2,text='o',font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda :root2_b_small_click(b))
+        b_medium=Button(root2,text="oo",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : root2_b_medium_click(b))
+        b_big=Button(root2,text="ooo",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : root2_b_big_click(b))
 
         b_small.grid(row=2, column=0)
         b_medium.grid(row=2, column=1)
