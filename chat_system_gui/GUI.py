@@ -12,7 +12,9 @@ import select
 from tkinter import *
 from tkinter import font
 from tkinter import ttk
+from tkinter import filedialog
 from chat_utils import *
+from PIL import ImageTk,Image
 import json
 
 # GUI class for the chat
@@ -159,7 +161,7 @@ class GUI:
 
         # place the given widget
         # into the gui window
-        self.entryMsg.place(relwidth=0.74,
+        self.entryMsg.place(relwidth=0.52,
                             relheight=0.06,
                             rely=0.008,
                             relx=0.011)
@@ -178,6 +180,23 @@ class GUI:
                              rely=0.008,
                              relheight=0.06,
                              relwidth=0.22)
+
+       
+
+        #m------------------------------
+        # create a image Button
+        self.buttonImage = Button(self.labelBottom,
+                                text="Image",
+                                font="Helvetica 10 bold",
+                                width=20,
+                                bg="#ABB2B9",
+                                command=lambda: self.imageButton(self.entryMsg.get()))
+
+        self.buttonImage.place(relx=0.55,
+                             rely=0.008,
+                             relheight=0.06,
+                             relwidth=0.22)
+        #m------------------------------
 
         self.textCons.config(cursor="arrow")
 
@@ -204,6 +223,33 @@ class GUI:
         self.textCons.insert(END, msg + "\n")
         self.textCons.config(state=DISABLED)
         self.textCons.see(END)
+
+    #m------------------------------
+    def imageButton(self, msg):
+        self.my_msg = msg
+        
+        self.imageviewer = Toplevel()
+        self.imageviewer.title('Image Viewer')
+        self.imageviewer.iconbitmap('desktop/ICS-final/ICS-final/chat_system_gui')
+        
+        global my_image
+        self.imageviewer.filename = filedialog.askopenfilename(initialdir="/images", title="Select A File", filetypes=(("jpg files", "*.jpg"),("all files", "*.*")))
+        #my_label = Label(imageviewer, text=self.imageviewer.filename).pack()
+        my_image = ImageTk.PhotoImage(Image.open(self.imageviewer.filename))
+        my_image_label = Label(self.imageviewer,image=my_image).pack()
+        #self.sendButton(my_image_label)
+        self.buttonMsg = Button(self.imageviewer,
+                                text="Send image",
+                                font="Helvetica 10 bold",
+                                width=20,
+                                bg="#ABB2B9",
+                                command=lambda: self.sendImage(my_image)).pack()
+
+    def sendImage(self,my_image):
+        pass
+        
+
+    #m------------------------------
 
     def proc(self):
         # print(self.msg)
