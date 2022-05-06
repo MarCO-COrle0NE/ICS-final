@@ -257,7 +257,7 @@ class GUI:
                             font="Helvetica 13")
         #self.entryImage.focus()
         self.entryImage.grid(row=1, column=1, columnspan=2, sticky=W+E)
-
+        self.entryImage.insert(0,'(' + image_name + ')')
         self.buttonSendImage = Button(self.imageviewer,
                                 text="Send image",
                                 font="Helvetica 10 bold",
@@ -280,6 +280,7 @@ class GUI:
         #msg = json.dumps({"action": "exchange", "message" : my_image})
         #self.send(msg)
         #response = json.loads(self.recv())
+        
     
     def saveImage(self,peer_image,location = 'peer_images/'):
         image = peer_image[1].encode('utf8')
@@ -313,9 +314,11 @@ class GUI:
                 self.textCons.insert(END, self.system_msg + "\n\n")
                 self.textCons.config(state=DISABLED)
                 self.textCons.see(END)
+                self.sm.my_image = []
                 #downloads image
                 if len(self.sm.peer_image) > 0:
                     self.saveImage(self.sm.peer_image)
+                    self.sm.peer_image = []
                     #self.openImage()
                     
 
