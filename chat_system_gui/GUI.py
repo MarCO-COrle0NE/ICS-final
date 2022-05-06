@@ -16,7 +16,7 @@ from tkinter import filedialog
 from chat_utils import *
 from PIL import ImageTk,Image
 import json
-
+import base64
 # GUI class for the chat
 
 
@@ -231,22 +231,69 @@ class GUI:
         self.imageviewer = Toplevel()
         self.imageviewer.title('Image Viewer')
         self.imageviewer.iconbitmap('desktop/ICS-final/ICS-final/chat_system_gui')
-        
+
         global my_image
         self.imageviewer.filename = filedialog.askopenfilename(initialdir="/images", title="Select A File", filetypes=(("jpg files", "*.jpg"),("all files", "*.*")))
-        #my_label = Label(imageviewer, text=self.imageviewer.filename).pack()
+        #my_label = Label(self.imageviewer, text=self.imageviewer.filename)
         my_image = ImageTk.PhotoImage(Image.open(self.imageviewer.filename))
-        my_image_label = Label(self.imageviewer,image=my_image).pack()
+        image_name = self.imageviewer.filename.split('/')[-1]
+        my_image_label = Label(self.imageviewer,image=my_image)
+        my_image_label.grid(row=0, column=0, columnspan=3, sticky=W+E)
+        #f = open(self.imageviewer.filename,'rb')
+        #my_image_code = f.read()
+        #f.close()
+        #my_image_code = base64.b64encode(my_image_code).decode("utf8")
+        with open(self.imageviewer.filename, "rb") as image2string:
+            my_image_code = base64.b64encode(image2string.read()).decode('utf8')
         #self.sendButton(my_image_label)
-        self.buttonMsg = Button(self.imageviewer,
+        
+        self.ImageMsg = Label(self.imageviewer,
+                            text = 'Message',
+                            font="Helvetica 13")
+        self.ImageMsg.grid(row=1, column=0, columnspan=1, sticky=W+E)
+        self.entryImage = Entry(self.imageviewer,
+                            bg="#2C3E50",
+                            fg="#EAECEE",
+                            font="Helvetica 13")
+        #self.entryImage.focus()
+        self.entryImage.grid(row=1, column=1, columnspan=2, sticky=W+E)
+        self.entryImage.insert(0,'(' + image_name + ')')
+        self.buttonSendImage = Button(self.imageviewer,
                                 text="Send image",
                                 font="Helvetica 10 bold",
                                 width=20,
                                 bg="#ABB2B9",
-                                command=lambda: self.sendImage(my_image)).pack()
+                                command=lambda: self.sendImage(image_name,my_image_code,self.entryImage.get()))
 
-    def sendImage(self,my_image):
-        pass
+        self.buttonSendImage.grid(row=3, column=0, columnspan=3, sticky=W+E)
+                       
+    def sendImage(self,image_name,my_image_code,msg):
+        self.my_msg = msg
+        self.sm.my_image = [image_name, my_image_code]
+        # print(msg)
+        self.entryImage.delete(0, END)
+        self.sendButton(msg)
+        #self.textCons.config(state=NORMAL)
+        #self.textCons.insert(END, msg + "\n")
+        #self.textCons.config(state=DISABLED)
+        #self.textCons.see(END)
+        #msg = json.dumps({"action": "exchange", "message" : my_image})
+        #self.send(msg)
+        #response = json.loads(self.recv())
+        
+    
+    def saveImage(self,peer_image,location = 'peer_images/'):
+        image = peer_image[1].encode('utf8')
+        f = open(location+peer_image[0],'wb')
+        f.write(base64.b64decode(image))
+        #f.write(base64.b64decode(peer_image[1]))
+        f.close()
+        self.imageviewer2 = Toplevel()
+        self.imageviewer2.title('Image Viewer')
+        self.imageviewer2.iconbitmap('desktop/ICS-final/ICS-final/chat_system_gui')
+        global my_image
+        my_image = ImageTk.PhotoImage(Image.open(location+peer_image[0]))
+        my_image_label = Label(self.imageviewer2,image=my_image).pack()
         
 
     #m------------------------------
@@ -267,6 +314,13 @@ class GUI:
                 self.textCons.insert(END, self.system_msg + "\n\n")
                 self.textCons.config(state=DISABLED)
                 self.textCons.see(END)
+                self.sm.my_image = []
+                #downloads image
+                if len(self.sm.peer_image) > 0:
+                    self.saveImage(self.sm.peer_image)
+                    self.sm.peer_image = []
+                    #self.openImage()
+                    
 
     def run(self):
         self.login()
