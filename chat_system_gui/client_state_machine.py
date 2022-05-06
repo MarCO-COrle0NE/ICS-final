@@ -5,6 +5,7 @@ Created on Sun Apr  5 00:00:32 2015
 """
 from chat_utils import *
 import json
+import game_tic_tac_toe as game
 
 class ClientSM:
     def __init__(self, s):
@@ -27,6 +28,22 @@ class ClientSM:
 
     def get_myname(self):
         return self.me
+
+    def game_connect_to(self,peer):
+        msg = json.dumps({"action": "game_connect", "target": peer})
+        mysend(self.s, msg)
+        response = json.loads(myrecv(self.s))
+        if response["status"] == "success":
+            self.peer = peer
+            self.out_msg += 'You are connected with ' + self.peer + '\n'
+            return (True)
+        elif response["status"] == "busy":
+            self.out_msg += 'User is busy. Please try again later\n'
+        elif response["status"] == "self":
+            self.out_msg += 'Cannot talk to yourself (sick)\n'
+        else:
+            self.out_msg += 'User is not online, try again later\n'
+        return (False)
 
     def connect_to(self, peer):
         msg = json.dumps({"action":"connect", "target":peer})
@@ -105,6 +122,16 @@ class ClientSM:
                         self.out_msg += poem + '\n\n'
                     else:
                         self.out_msg += 'Sonnet ' + poem_idx + ' not found\n\n'
+                
+                elif my_msg[0]=="g":
+                    peer = my_msg[1:]
+                    peer = peer.strip()
+                    if self.game_connect_to(peer) == True:
+                        self.state = S_GAMING
+                        self.out_msg += 'Connect to ' + peer + '. Play the game!\n\n'
+                        self.out_msg += '-----------------------------------\n'
+                    else:
+                        self.out_msg += 'Connection unsuccessful\n'
 
                 else:
                     self.out_msg += menu
@@ -147,6 +174,13 @@ class ClientSM:
                     #image
                     if len(peer_msg["image"]) > 0:
                         self.peer_image = peer_msg["image"]
+
+            # Display the menu again
+            if self.state == S_LOGGEDIN:
+                self.out_msg += menu
+
+        elif self.state==S_GAMING:
+            game.main()
 
             # Display the menu again
             if self.state == S_LOGGEDIN:
