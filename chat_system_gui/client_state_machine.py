@@ -13,6 +13,7 @@ class ClientSM:
         self.me = ''
         self.out_msg = ''
         self.s = s
+        self.my_image = ''
 
     def set_state(self, state):
         self.state = state
@@ -122,7 +123,8 @@ class ClientSM:
 #==============================================================================
         elif self.state == S_CHATTING:
             if len(my_msg) > 0:     # my stuff going out
-                mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg}))
+                #self.my_image = ''
+                mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg, "image":self.my_image}))
                 if my_msg == 'bye':
                     self.disconnect()
                     self.state = S_LOGGEDIN
@@ -133,8 +135,14 @@ class ClientSM:
                     self.out_msg += "(" + peer_msg["from"] + " joined)\n"
                 elif peer_msg["action"] == "disconnect":
                     self.state = S_LOGGEDIN
+                #image, might be redundant
+                #elif peer_msg["action"] == "image":
+                    #self.out_msg += peer_msg["from"] + peer_msg["message"]
+                
                 else:
                     self.out_msg += peer_msg["from"] + peer_msg["message"]
+                    #if peer_msg['image'] > 0:
+
 
 
             # Display the menu again

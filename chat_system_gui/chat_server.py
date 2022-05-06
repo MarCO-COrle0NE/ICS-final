@@ -136,7 +136,7 @@ class Server:
                     to_sock = self.logged_name2sock[g]
                     self.indices[g].add_msg_and_index(said2)
                     mysend(to_sock, json.dumps(
-                        {"action": "exchange", "from": msg["from"], "message": msg["message"]}))
+                        {"action": "exchange", "from": msg["from"], "message": msg["message"], "image": msg["image"]}))
 # ==============================================================================
 #                 listing available peers
 # ==============================================================================
@@ -193,6 +193,7 @@ class Server:
 #                 the "from" guy really, really has had enough
 # ==============================================================================
 
+            
         else:
             # client died unexpectedly
             self.logout(from_sock)

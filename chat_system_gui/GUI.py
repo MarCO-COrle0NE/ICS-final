@@ -231,22 +231,52 @@ class GUI:
         self.imageviewer = Toplevel()
         self.imageviewer.title('Image Viewer')
         self.imageviewer.iconbitmap('desktop/ICS-final/ICS-final/chat_system_gui')
+
+        
         
         global my_image
         self.imageviewer.filename = filedialog.askopenfilename(initialdir="/images", title="Select A File", filetypes=(("jpg files", "*.jpg"),("all files", "*.*")))
         #my_label = Label(imageviewer, text=self.imageviewer.filename).pack()
         my_image = ImageTk.PhotoImage(Image.open(self.imageviewer.filename))
-        my_image_label = Label(self.imageviewer,image=my_image).pack()
+        my_image_label = Label(self.imageviewer,image=my_image)
+        my_image_label.grid(row=0, column=0, columnspan=3, sticky=W+E)
+
         #self.sendButton(my_image_label)
-        self.buttonMsg = Button(self.imageviewer,
+        
+        self.ImageMsg = Label(self.imageviewer,
+                            bg="#2C3E50",
+                            fg="#EAECEE",
+                            font="Helvetica 13")
+        self.ImageMsg.grid(row=1, column=0, columnspan=1, sticky=W+E)
+        self.entryImage = Entry(self.imageviewer,
+                            bg="#2C3E50",
+                            fg="#EAECEE",
+                            font="Helvetica 13")
+        #self.entryImage.focus()
+        self.entryImage.grid(row=1, column=1, columnspan=2, sticky=W+E)
+
+        self.buttonSendImage = Button(self.imageviewer,
                                 text="Send image",
                                 font="Helvetica 10 bold",
                                 width=20,
                                 bg="#ABB2B9",
-                                command=lambda: self.sendImage(my_image)).pack()
+                                command=lambda: self.sendImage(str(my_image),self.entryImage.get()))
 
-    def sendImage(self,my_image):
-        pass
+        self.buttonSendImage.grid(row=3, column=0, columnspan=3, sticky=W+E)
+                       
+    def sendImage(self,my_image,msg):
+        self.my_msg = msg
+        self.sm.my_image = my_image
+        # print(msg)
+        self.entryImage.delete(0, END)
+        self.textCons.config(state=NORMAL)
+        self.textCons.insert(END, msg + "\n")
+        self.textCons.config(state=DISABLED)
+        self.textCons.see(END)
+        #msg = json.dumps({"action": "exchange", "message" : my_image})
+        #self.send(msg)
+        #response = json.loads(self.recv())
+        
         
 
     #m------------------------------
