@@ -242,9 +242,9 @@ class GUI:
         #f = open(self.imageviewer.filename,'rb')
         #my_image_code = f.read()
         #f.close()
-        my_image_code = base64.b64encode(my_image_code)#.decode("utf8")
+        #my_image_code = base64.b64encode(my_image_code).decode("utf8")
         with open(self.imageviewer.filename, "rb") as image2string:
-            my_image_code = base64.b64encode(image2string.read())
+            my_image_code = base64.b64encode(image2string.read()).decode('utf8')
         #self.sendButton(my_image_label)
         
         self.ImageMsg = Label(self.imageviewer,
@@ -282,14 +282,15 @@ class GUI:
         #response = json.loads(self.recv())
     
     def saveImage(self,peer_image,location = 'peer_images/'):
-        #image = peer_image[1].encode('utf8')
+        image = peer_image[1].encode('utf8')
         f = open(location+peer_image[0],'wb')
-        #f.write(base64.b64decode(image))
-        f.write(base64.b64decode(peer_image[1]))
+        f.write(base64.b64decode(image))
+        #f.write(base64.b64decode(peer_image[1]))
         f.close()
         self.imageviewer2 = Toplevel()
         self.imageviewer2.title('Image Viewer')
         self.imageviewer2.iconbitmap('desktop/ICS-final/ICS-final/chat_system_gui')
+        global my_image
         my_image = ImageTk.PhotoImage(Image.open(location+peer_image[0]))
         my_image_label = Label(self.imageviewer2,image=my_image).pack()
         
