@@ -14,6 +14,8 @@ class ClientSM:
         self.me = ''
         self.out_msg = ''
         self.s = s
+        self.my_image = []
+        self.peer_image = []
 
     def set_state(self, state):
         self.state = state
@@ -26,6 +28,7 @@ class ClientSM:
 
     def get_myname(self):
         return self.me
+
     def game_connect_to(self,peer):
         msg = json.dumps({"action": "game_connect", "target": peer})
         mysend(self.s, msg)
@@ -66,6 +69,7 @@ class ClientSM:
 
     def proc(self, my_msg, peer_msg):
         self.out_msg = ''
+        #self.peer_image = []
 #==============================================================================
 # Once logged in, do a few things: get peer listing, connect, search
 # And, of course, if you are so bored, just go
@@ -118,6 +122,7 @@ class ClientSM:
                         self.out_msg += poem + '\n\n'
                     else:
                         self.out_msg += 'Sonnet ' + poem_idx + ' not found\n\n'
+                
                 elif my_msg[0]=="g":
                     peer = my_msg[1:]
                     peer = peer.strip()
@@ -147,19 +152,33 @@ class ClientSM:
 #==============================================================================
         elif self.state == S_CHATTING:
             if len(my_msg) > 0:     # my stuff going out
-                mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg}))
+                #self.my_image = ''
+                mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg, "image":self.my_image}))
                 if my_msg == 'bye':
                     self.disconnect()
                     self.state = S_LOGGEDIN
                     self.peer = ''
             if len(peer_msg) > 0:    # peer's stuff, coming in
+                self.peer_image = []
                 peer_msg = json.loads(peer_msg)
                 if peer_msg["action"] == "connect":
                     self.out_msg += "(" + peer_msg["from"] + " joined)\n"
                 elif peer_msg["action"] == "disconnect":
                     self.state = S_LOGGEDIN
+                #image, might be redundant
+                #elif peer_msg["action"] == "image":
+                    #self.out_msg += peer_msg["from"] + peer_msg["message"]
+                
                 else:
                     self.out_msg += peer_msg["from"] + peer_msg["message"]
+                    #image
+                    if len(peer_msg["image"]) > 0:
+                        self.peer_image = peer_msg["image"]
+
+            # Display the menu again
+            if self.state == S_LOGGEDIN:
+                self.out_msg += menu
+
         elif self.state==S_GAMING:
             game.main()
 

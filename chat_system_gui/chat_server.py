@@ -136,7 +136,7 @@ class Server:
                     to_sock = self.logged_name2sock[g]
                     self.indices[g].add_msg_and_index(said2)
                     mysend(to_sock, json.dumps(
-                        {"action": "exchange", "from": msg["from"], "message": msg["message"]}))
+                        {"action": "exchange", "from": msg["from"], "message": msg["message"], "image": msg["image"]}))
 # ==============================================================================
 #                 listing available peers
 # ==============================================================================
@@ -180,6 +180,18 @@ class Server:
 # ==============================================================================
 # the "from" guy has had enough (talking to "to")!
 # ==============================================================================
+            elif msg["action"] == "disconnect":
+                from_name = self.logged_sock2name[from_sock]
+                the_guys = self.group.list_me(from_name)
+                self.group.disconnect(from_name)
+                the_guys.remove(from_name)
+                if len(the_guys) == 1:  # only one left
+                    g = the_guys.pop()
+                    to_sock = self.logged_name2sock[g]
+                    mysend(to_sock, json.dumps({"action": "disconnect"}))
+# ==============================================================================
+#                 the "from" guy really, really has had enough
+# ==============================================================================
             elif msg["action"]=="game_connect":
                 to_name = msg["target"]
                 from_name = self.logged_sock2name[from_sock]
@@ -200,19 +212,7 @@ class Server:
                     msg = json.dumps(
                         {"action": "game_connect", "status": "no-user"})
                 mysend(from_sock, msg)
-            elif msg["action"] == "disconnect":
-                from_name = self.logged_sock2name[from_sock]
-                the_guys = self.group.list_me(from_name)
-                self.group.disconnect(from_name)
-                the_guys.remove(from_name)
-                if len(the_guys) == 1:  # only one left
-                    g = the_guys.pop()
-                    to_sock = self.logged_name2sock[g]
-                    mysend(to_sock, json.dumps({"action": "disconnect"}))
-# ==============================================================================
-#                 the "from" guy really, really has had enough
-# ==============================================================================
-
+            
         else:
             # client died unexpectedly
             self.logout(from_sock)
@@ -246,4 +246,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-# update at 2022/5/6
