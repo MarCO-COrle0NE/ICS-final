@@ -239,10 +239,12 @@ class GUI:
         image_name = self.imageviewer.filename.split('/')[-1]
         my_image_label = Label(self.imageviewer,image=my_image)
         my_image_label.grid(row=0, column=0, columnspan=3, sticky=W+E)
-        f = open(self.imageviewer.filename,'rb')
-        my_image_code = f.read()
-        f.close()
+        #f = open(self.imageviewer.filename,'rb')
+        #my_image_code = f.read()
+        #f.close()
         my_image_code = base64.b64encode(my_image_code)#.decode("utf8")
+        with open(self.imageviewer.filename, "rb") as image2string:
+            my_image_code = base64.b64encode(image2string.read())
         #self.sendButton(my_image_label)
         
         self.ImageMsg = Label(self.imageviewer,
@@ -270,10 +272,11 @@ class GUI:
         self.sm.my_image = [image_name, my_image_code]
         # print(msg)
         self.entryImage.delete(0, END)
-        self.textCons.config(state=NORMAL)
-        self.textCons.insert(END, msg + "\n")
-        self.textCons.config(state=DISABLED)
-        self.textCons.see(END)
+        self.sendButton(msg)
+        #self.textCons.config(state=NORMAL)
+        #self.textCons.insert(END, msg + "\n")
+        #self.textCons.config(state=DISABLED)
+        #self.textCons.see(END)
         #msg = json.dumps({"action": "exchange", "message" : my_image})
         #self.send(msg)
         #response = json.loads(self.recv())
