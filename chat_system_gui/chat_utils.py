@@ -2,9 +2,9 @@ import socket
 import time
 
 # use local loop back address by default
-#CHAT_IP = '127.0.0.1'
+CHAT_IP = '127.0.0.1'
 # CHAT_IP = socket.gethostbyname(socket.gethostname())
-CHAT_IP = ''  # socket.gethostbyname(socket.gethostname())
+#CHAT_IP = ''  # socket.gethostbyname(socket.gethostname())
 
 CHAT_PORT = 1112
 SERVER = (CHAT_IP, CHAT_PORT)
@@ -15,12 +15,14 @@ menu = "\n++++ Choose one of the following commands\n \
         c _peer_: to connect to the _peer_ and chat\n \
         ? _term_: to search your chat logs where _term_ appears\n \
         p _#_: to get number <#> sonnet\n \
+        g _peer_: to play game with your _peer_\
         q: to leave the chat system\n\n"
 
 S_OFFLINE = 0
 S_CONNECTED = 1
 S_LOGGEDIN = 2
 S_CHATTING = 3
+S_GAMING=4
 
 SIZE_SPEC = 5
 
@@ -37,6 +39,8 @@ def print_state(state):
         print('Logged in')
     elif state == S_CHATTING:
         print('Chatting')
+    elif state==S_GAMING:#加状态
+        print("Gaming")
     else:
         print('Error: wrong state')
 
