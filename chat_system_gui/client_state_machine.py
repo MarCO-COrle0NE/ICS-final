@@ -13,7 +13,8 @@ class ClientSM:
         self.me = ''
         self.out_msg = ''
         self.s = s
-        self.my_image = ''
+        self.my_image = []
+        self.peer_image = []
 
     def set_state(self, state):
         self.state = state
@@ -141,9 +142,9 @@ class ClientSM:
                 
                 else:
                     self.out_msg += peer_msg["from"] + peer_msg["message"]
-                    #if peer_msg['image'] > 0:
-
-
+                    #image
+                    if len(peer_msg["image"]) > 0:
+                        self.peer_image = peer_msg["image"]
 
             # Display the menu again
             if self.state == S_LOGGEDIN:
