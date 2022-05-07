@@ -5,6 +5,7 @@ def main():
     root=Tk()
     root.title("Tic Tac Toe 2.0")
     root.geometry("450x700")
+    global clicked, count,dict_x,dict_o
     clicked=True
     count=0
     # dict to record the remaining chess pieces
@@ -410,6 +411,8 @@ def main():
 
 
     root.mainloop()
-# main()
+main()
+
+
 
 
