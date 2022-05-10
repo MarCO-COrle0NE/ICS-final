@@ -5,8 +5,8 @@ def main():
     root=Tk()
     root.title("Tic Tac Toe 2.0")
     root.geometry("450x700")
-    global clicked, count,dict_x,dict_o
-    clicked=True
+    global clicked, count,dict_x,dict_o,flg
+    clicked,flg=True,False
     count=0
     # dict to record the remaining chess pieces
     dict_x={"x":3,"xx":3,"xxx":3}
@@ -230,22 +230,23 @@ def main():
             winner = True
             count += 1
             disable_all_buttons()
-        if count==27 and winner==False:# tie 的条件有问题
+        elif count==27 and winner==False:# tie 的条件有问题
             messagebox.showinfo("Tic Tac Toe 2.0","It's a tie!\nNobody wins the game!")
             disable_all_buttons()
-
-
+        elif flg:
+            messagebox.showinfo("Tic Tac Toe 2.0","It's a tie!\nNobody wins the game!")
+            disable_all_buttons()
 
     # when click, what should the program do
     # x start first
     def button_click(b):
         global clicked, count,dict_o,dict_x
         # 已有最大的棋但还是点了
-        if clicked==True and b["text"]=="ooo":
+        if b["text"]=="ooo":
             messagebox.showwarning("You can't put your piece here!","You can't put any piece here\nbecause \'ooo\' is the largest piece!\nPlease choose another place!")
             b.config(state=DISABLED)
-        elif clicked==False and b["text"]=="xxx":
-            messagebox.showwarning("You can't put your piece here!",\
+        elif b["text"]=="xxx":
+            messagebox.showwarning("You can't put your piece here!",
                                    "You can't put any piece here\nbecause \'xxx\' is the largest piece!\n\
                                    Please choose another place!")
             b.config(state=DISABLED)
@@ -257,6 +258,7 @@ def main():
                 dict_x["xxx"]-=1
                 clicked=False
                 count+=1
+                flg=False
                 check_if_win()
                 if winner:
                     messagebox.showinfo("Game over!", "Congratulation! x wins!")  # 可能要把x变成player的名字
@@ -266,6 +268,7 @@ def main():
                 dict_x["xx"] -= 1
                 clicked = False
                 count += 1
+                flg=False
                 check_if_win()
                 if winner:
                     messagebox.showinfo("Game over!", "Congratulation! x wins!")  # 可能要把x变成player的名字
@@ -273,6 +276,7 @@ def main():
                 messagebox.showwarning("You have no choice!", "You can't put any piece here\n\
                                                            because you don't have suitable piece!\n\
                                                            Please choose another place!")
+                flg=True
             else:
                 result=messagebox.askokcancel("which piece would you choose?","If you choose big piece, please click \'OK\' Button.\"\
                                                                    \n If you choose medium piece, please click \'Cancel\' Button.")
@@ -284,6 +288,7 @@ def main():
                     dict_x["xx"]-=1
                 clicked=False
                 count += 1
+                flg=False
                 check_if_win()
                 if winner:
                     messagebox.showinfo("Game over!","Congratulation! x wins!")# 可能要把x变成player的名字
@@ -294,6 +299,7 @@ def main():
                 dict_o["ooo"]-=1
                 clicked=True
                 count += 1
+                flg=False
                 check_if_win()
                 if winner:
                     messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把o变成player的名字
@@ -303,6 +309,7 @@ def main():
                 dict_o["oo"] -= 1
                 clicked = True
                 count += 1
+                flg=False
                 check_if_win()
                 if winner:
                     messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把o变成player的名字
@@ -310,6 +317,7 @@ def main():
                 messagebox.showwarning("You have no choice!", "You can't put any piece here\n\
                                                            because you don't have suitable piece!\n\
                                                            Please choose another place!")
+                flg=True
             else:
                 result = messagebox.askokcancel("which piece would you choose?", "If you choose big piece, please click \'OK\' Button.\"\
                                                                            \n If you choose medium piece, please click \'Cancel\' Button.")
@@ -321,6 +329,7 @@ def main():
                     dict_o["oo"]-=1
                 clicked=True
                 count += 1
+                flg=False
                 check_if_win()
                 if winner:
                     messagebox.showinfo("Game over!", "Congratulation! o wins!") #换player名字
@@ -336,16 +345,18 @@ def main():
                 if winner:
                     messagebox.showinfo("Game over!", "Congratulation! x wins!")  # 可能要把x变成player的名字
             elif dict_x["xxx"]==0:
-                messagebox.showwarning("You have no choice!", "You can't put any piece here\n\
+                messagebox.showwarning("You have no choice!"," You can't put any piece here\n\
                                                                        because you don't have suitable piece!\n\
                                                                        Please choose another place!")
+                flg=True
         elif clicked==False and len(b["text"])==2:
             if dict_o["ooo"]!=0:
-                messagebox.showinfo("You only have one choice!","The big piece will be set here.")
+                messagebox.showinfo("You only have one choice!"," The big piece will be set here.")
                 b["text"]="ooo"
                 dict_o["ooo"]-=1
                 clicked=True
                 count += 1
+                flg=False
                 check_if_win()
                 if winner:
                     messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把o变成player的名字
@@ -353,6 +364,7 @@ def main():
                 messagebox.showwarning("You have no choice!", "You can't put any piece here\n\
                                                                        because you don't have suitable piece!\n\
                                                                        Please choose another place!")
+                flg=True
         # Button里是空的
         elif clicked==True and b["text"]=="":
             root1=Tk()
@@ -384,6 +396,7 @@ def main():
             b_small.grid(row=2, column=0)
             b_medium.grid(row=2, column=1)
             b_big.grid(row=2, column=2)
+        check_if_win()
 
     name_label=tkinter.Label(root, text="Let's play the game!")
     name_label.grid(row=0,column=2)
@@ -411,7 +424,7 @@ def main():
 
 
     root.mainloop()
-if __name__==if __name__ == "__main__":
+if __name__=="__main__":
     main()
 
 
