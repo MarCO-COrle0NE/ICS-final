@@ -236,17 +236,14 @@ class GUI:
         self.imageviewer.filename = filedialog.askopenfilename(initialdir="/images", title="Select A File", filetypes=(("jpg files", "*.jpg"),("all files", "*.*")))
         #my_label = Label(self.imageviewer, text=self.imageviewer.filename)
         my_image = ImageTk.PhotoImage(Image.open(self.imageviewer.filename))
-        image_name = self.imageviewer.filename.split('/')[-1]
         my_image_label = Label(self.imageviewer,image=my_image)
         my_image_label.grid(row=0, column=0, columnspan=3, sticky=W+E)
-        #f = open(self.imageviewer.filename,'rb')
-        #my_image_code = f.read()
-        #f.close()
-        #my_image_code = base64.b64encode(my_image_code).decode("utf8")
-        with open(self.imageviewer.filename, "rb") as image2string:
-            my_image_code = base64.b64encode(image2string.read()).decode('utf8')
         #self.sendButton(my_image_label)
-        
+
+        #image_name = self.imageviewer.filename.split('/')[-1]
+        #with open(self.imageviewer.filename, "rb") as image2string:
+            #my_image_code = base64.b64encode(image2string.read()).decode('utf8')
+
         self.ImageMsg = Label(self.imageviewer,
                             text = 'Message',
                             font="Helvetica 13")
@@ -263,11 +260,17 @@ class GUI:
                                 font="Helvetica 10 bold",
                                 width=20,
                                 bg="#ABB2B9",
-                                command=lambda: self.sendImage(image_name,my_image_code,self.entryImage.get()))
+                                command=lambda: self.sendImage(self.imageviewer.filename,self.entryImage.get()))
+                                #command=lambda: self.sendImage(image_name,my_image_code,self.entryImage.get()))
 
         self.buttonSendImage.grid(row=3, column=0, columnspan=3, sticky=W+E)
                        
-    def sendImage(self,image_name,my_image_code,msg):
+    def sendImage(self,image_filename,msg): 
+        image_name = image_filename.split('/')[-1]
+        with open(image_filename, "rb") as image2string:
+            my_image_code = base64.b64encode(image2string.read()).decode('utf8')
+        #---------------------------------
+    #def sendImage(self,image_name,my_image_code,msg):
         self.my_msg = msg
         self.sm.my_image = [image_name, my_image_code]
         # print(msg)
