@@ -240,7 +240,7 @@ class GUI:
         my_image_label.grid(row=0, column=0, columnspan=3, sticky=W+E)
         #self.sendButton(my_image_label)
 
-        #image_name = self.imageviewer.filename.split('/')[-1]
+        image_name = self.imageviewer.filename.split('/')[-1]
         #with open(self.imageviewer.filename, "rb") as image2string:
             #my_image_code = base64.b64encode(image2string.read()).decode('utf8')
 
@@ -260,13 +260,13 @@ class GUI:
                                 font="Helvetica 10 bold",
                                 width=20,
                                 bg="#ABB2B9",
-                                command=lambda: self.sendImage(self.imageviewer.filename,self.entryImage.get()))
+                                command=lambda: self.sendImage(image_name,self.imageviewer.filename,self.entryImage.get()))
                                 #command=lambda: self.sendImage(image_name,my_image_code,self.entryImage.get()))
 
         self.buttonSendImage.grid(row=3, column=0, columnspan=3, sticky=W+E)
                        
-    def sendImage(self,image_filename,msg): 
-        image_name = image_filename.split('/')[-1]
+    def sendImage(self,image_name,image_filename,msg): 
+        #image_name = image_filename.split('/')[-1]
         with open(image_filename, "rb") as image2string:
             my_image_code = base64.b64encode(image2string.read()).decode('utf8')
         #---------------------------------
