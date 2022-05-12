@@ -2,7 +2,7 @@ import tkinter
 from tkinter import *
 from tkinter import messagebox
 def main():
-    root=Tk()
+    root=Toplevel()
     root.title("Tic Tac Toe 2.0")
     root.geometry("450x700")
     global clicked, count,dict_x,dict_o,flg
@@ -425,7 +425,7 @@ def main():
 
     root.mainloop()
 if __name__=="__main__":
-    main()
+    game()
 
 
 

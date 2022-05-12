@@ -146,6 +146,14 @@ class ClientSM:
                     self.out_msg += '------------------------------------\n'
                     self.state = S_CHATTING
 
+                if peer_msg["action"] == "game_connect":
+                    self.peer = peer_msg["from"]
+                    self.out_msg += 'Game request from ' + self.peer + '\n'
+                    self.out_msg += 'You are connected with ' + self.peer
+                    self.out_msg += '. Play the game!\n\n'
+                    self.out_msg += '------------------------------------\n'
+                    self.state = S_GAMING
+
 #==============================================================================
 # Start chatting, 'bye' for quit
 # This is event handling instate "S_CHATTING"
