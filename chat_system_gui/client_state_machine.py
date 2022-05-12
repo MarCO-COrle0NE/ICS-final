@@ -184,8 +184,8 @@ class ClientSM:
                         self.peer_image = peer_msg["image"]
 
             # Display the menu again
-            #if self.state == S_LOGGEDIN:
-                #self.out_msg += menu
+            if self.state == S_LOGGEDIN:
+                self.out_msg += menu
 
         elif self.state==S_GAMING:
             game.main()
