@@ -188,7 +188,22 @@ class ClientSM:
                 self.out_msg += menu
 
         elif self.state==S_GAMING:
-            game.main()
+            if len(my_msg) > 0:     # my stuff going out
+                #self.my_image = ''
+                mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg, "image":self.my_image}))
+                if my_msg == 'bye':
+                    self.disconnect()
+                    self.state = S_LOGGEDIN
+                    self.peer = ''
+                else:
+                    game.main()
+            if len(peer_msg) > 0:    # peer's stuff, coming in
+                self.peer_image = []
+                peer_msg = json.loads(peer_msg)
+                if peer_msg["action"] == "game_connect":
+                    self.out_msg += "(" + peer_msg["from"] + " joined to play)\n"
+                elif peer_msg["action"] == "disconnect":
+                    self.state = S_LOGGEDIN
 
             # Display the menu again
             if self.state == S_LOGGEDIN:
