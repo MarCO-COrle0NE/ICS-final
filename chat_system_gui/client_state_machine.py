@@ -130,6 +130,11 @@ class ClientSM:
                         self.state = S_GAMING
                         self.out_msg += 'Connect to ' + peer + '. Play the game!\n\n'
                         self.out_msg += '-----------------------------------\n'
+                        self.out_msg+="Rules of Tic Tac Toe 2.0\n\
+                                  1. The conditions of victory are the same as ordinary tic-tac-toe\n\
+                                  2. Each player has three types of pieces: small, medium and big. Each type has 3 pieces.\n\
+                                  3. Medium type can cover any small type of piece, big type can cover any small or medium type.\n\
+                                  4. Big type can not be covered."
                     else:
                         self.out_msg += 'Connection unsuccessful\n'
 
@@ -152,6 +157,11 @@ class ClientSM:
                     self.out_msg += 'You are connected with ' + self.peer
                     self.out_msg += '. Play the game!\n\n'
                     self.out_msg += '------------------------------------\n'
+                    self.out_msg+="Rules of Tic Tac Toe 2.0\n\
+                                  1. The conditions of victory are the same as ordinary tic-tac-toe\n\
+                                  2. Each player has three types of pieces: small, medium and big. Each type has 3 pieces.\n\
+                                  3. Medium type can cover any small type of piece, big type can cover any small or medium type.\n\
+                                  4. Big type can not be covered."
                     self.state = S_GAMING
 
 #==============================================================================
