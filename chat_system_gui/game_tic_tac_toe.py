@@ -48,27 +48,29 @@ def main(sm,socket=None):
         #peer_msg = []
         #print(self.msg)
         #if socket in read:
-            peer_msg = myrecv(socket)
+        peer_msg = myrecv(socket)
         
+        peer_msg = json.loads(peer_msg)
+        print(peer_msg)
+        if peer_msg["move"] == "quit":
+                quit()
+                print('quit!')
+                return None
+        while len(peer_msg) <= 0 or peer_msg['action'] != 'game':
+            peer_msg = myrecv(socket)
             peer_msg = json.loads(peer_msg)
             print(peer_msg)
-        
-            while len(peer_msg) <= 0 or peer_msg['action'] != 'game':
-                peer_msg = myrecv(socket)
-                peer_msg = json.loads(peer_msg)
-                print(peer_msg)
-                try:
-                    if peer_msg['move'] == 'quit':
-                        quit()
-                        return
-                except:
-                    pass
-                print(peer_msg)
+            if peer_msg["move"] == "quit":
+                quit()
+                print('quit!')
+                return None
                 
-            peer_chess = peer_msg['move'][1]
-            peer_button = lb[peer_msg['move'][0]]
-            peer_msg = ''
-            peer_move(peer_chess,peer_button)
+                #print(peer_msg)
+                
+        peer_chess = peer_msg['move'][1]
+        peer_button = lb[peer_msg['move'][0]]
+        peer_msg = ''
+        peer_move(peer_chess,peer_button)
 
     def peer_move(peer_chess,peer_button):
         global clicked,count
