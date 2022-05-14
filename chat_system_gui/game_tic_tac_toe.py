@@ -1,17 +1,87 @@
+from cgitb import enable
 import tkinter
 from tkinter import *
 from tkinter import messagebox
-def main():
+from chat_utils import *
+import json
+import select
+def main(role,me,socket=None):
     root=Toplevel()
     root.title("Tic Tac Toe 2.0")
     root.geometry("450x700")
     global clicked, count,dict_x,dict_o,flg
     clicked,flg=True,False
+    my_turn = True
     count=0
     # dict to record the remaining chess pieces
     dict_x={"x":3,"xx":3,"xxx":3}
     dict_o={"o":3,"oo":3,"ooo":3}
     # Button里没有text时，选完piece之后的操作
+
+    def move_send(move):
+        msg = json.dumps({"action":"game", "from":"[" + me + "]", "move":move})
+        mysend(socket, msg)
+    
+    def move_recv():
+        #read, write, error = select.select([socket], [], [], 0)
+        #peer_msg = []
+            # print(self.msg)
+        #if socket in read:
+            peer_msg = myrecv(socket)
+        #while len(peer_msg) <= 0 and peer_msg['action'] != 'game':
+            peer_chess = peer_msg['move'][1]
+            peer_button = lb[peer_msg['move'][0]]
+            if role == 'x':
+                    if peer_chess == 1:
+                        peer_button["text"] = ""
+                        peer_move(peer_chess,peer_button)
+                    elif peer_chess == 2:
+                        peer_button["text"] = ""
+                        peer_move(peer_chess,peer_button)
+                    elif peer_chess == 3:
+                        peer_button["text"] = ""
+                        peer_move(peer_chess,peer_button)
+            else:
+                    if peer_chess == 1:
+                        peer_button["text"] = ""
+                        peer_move(peer_chess,peer_button)
+                    elif peer_chess == 2:
+                        peer_button["text"] = ""
+                        peer_move(peer_chess,peer_button)
+                    elif peer_chess == 3:
+                        peer_button["text"] = ""
+                        peer_move(peer_chess,peer_button)
+            check_if_win()
+            if winner:
+                    messagebox.showinfo("Game over!", "Congratulation! x wins!")
+            #peer_msg = myrecv(socket)
+
+    def peer_move():
+        pass
+
+    def switch_turn():
+        if clicked:
+            if role == 'x':
+                turn_label['text'] = "It's x's turn"
+                enable_all_buttons()
+                my_turn = True
+                
+            else:
+                turn_label['text'] = "It's x's turn"
+                disable_all_buttons()
+                my_turn = False
+                move_recv()
+        else:
+            if role == 'x':
+                turn_label['text'] = "It's o's turn"
+                disable_all_buttons()
+                my_turn = False
+                move_recv()
+            else:
+                turn_label['text'] = "It's o's turn"
+                enable_all_buttons()
+                my_turn = True
+    #switch_turn()
     def root1_b_small_click(root1_b,b):
         global clicked,winner,count
         if dict_x["x"]==0:
@@ -20,7 +90,10 @@ def main():
             root1_b.config(state=DISABLED)
             b["text"] = "x"
             dict_x["x"] -= 1
+            if my_turn:
+                move_send([lb.index(b),1])
             clicked = False
+            switch_turn()
             count += 1
             check_if_win()
             if winner:
@@ -33,7 +106,10 @@ def main():
             root1_b.config(state=DISABLED)
             b["text"] = "xx"
             dict_x["xx"] -= 1
+            if my_turn:
+                move_send([lb.index(b),2])
             clicked = False
+            switch_turn()
             count += 1
             check_if_win()
             if winner:
@@ -46,7 +122,10 @@ def main():
             root1_b.config(state=DISABLED)
             b["text"] = "xxx"
             dict_x["xxx"] -= 1
+            if my_turn:
+                move_send([lb.index(b),3])
             clicked = False
+            switch_turn()
             count += 1
             check_if_win()
             if winner:
@@ -59,7 +138,10 @@ def main():
             root2_b.config(state=DISABLED)
             b["text"] = "o"
             dict_o["o"] -= 1
+            if my_turn:
+                move_send([lb.index(b),1])
             clicked = True
+            switch_turn()
             count += 1
             check_if_win()
             if winner:
@@ -72,7 +154,10 @@ def main():
             root2_b.config(state=DISABLED)
             b["text"] = "oo"
             dict_o["oo"] -= 1
+            if my_turn:
+                move_send([lb.index(b),2])
             clicked = True
+            switch_turn()
             count += 1
             check_if_win()
             if winner:
@@ -85,7 +170,10 @@ def main():
             root2_b.config(state=DISABLED)
             b["text"] = "ooo"
             dict_o["ooo"] -= 1
+            if my_turn:
+                move_send([lb.index(b),3])
             clicked = True
+            switch_turn()
             count += 1
             check_if_win()
             if winner:
@@ -105,6 +193,17 @@ def main():
         b7.config(state=DISABLED)
         b8.config(state=DISABLED)
         b9.config(state=DISABLED)
+    
+    def enable_all_buttons():
+        b1.config(state=NORMAL)
+        b2.config(state=NORMAL)
+        b3.config(state=NORMAL)
+        b4.config(state=NORMAL)
+        b5.config(state=NORMAL)
+        b6.config(state=NORMAL)
+        b7.config(state=NORMAL)
+        b8.config(state=NORMAL)
+        b9.config(state=NORMAL)
 
     #check if someone win
     def check_if_win():
@@ -398,8 +497,10 @@ def main():
             b_big.grid(row=2, column=2)
         check_if_win()
 
-    name_label=tkinter.Label(root, text="Let's play the game!")
+    name_label=tkinter.Label(root, text="Let's play the game! You're %s" % role)
     name_label.grid(row=0,column=2)
+    
+
     b1=Button(root,text="",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : button_click(b1))
     b2=Button(root,text="",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : button_click(b2))
     b3=Button(root,text="",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : button_click(b3))
@@ -409,21 +510,25 @@ def main():
     b7=Button(root,text="",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : button_click(b7))
     b8=Button(root,text="",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : button_click(b8))
     b9=Button(root,text="",font=("Times",20),height=3,width=6,bg="SystemButtonFace",command=lambda : button_click(b9))
+    lb = [0,b1,b2,b3,b4,b5,b6,b7,b8,b9]
+    turn_label = tkinter.Label(root, text="")
+    #switch_turn()
+    turn_label.grid(row=1,column=2)
 
-    b1.grid(row=1,column=1)
-    b2.grid(row=1,column=2)
-    b3.grid(row=1,column=3)
+    b1.grid(row=2,column=1)
+    b2.grid(row=2,column=2)
+    b3.grid(row=2,column=3)
 
-    b4.grid(row=2,column=1)
-    b5.grid(row=2,column=2)
-    b6.grid(row=2,column=3)
+    b4.grid(row=3,column=1)
+    b5.grid(row=3,column=2)
+    b6.grid(row=3,column=3)
 
-    b7.grid(row=3,column=1)
-    b8.grid(row=3,column=2)
-    b9.grid(row=3,column=3)
+    b7.grid(row=4,column=1)
+    b8.grid(row=4,column=2)
+    b9.grid(row=4,column=3)
 
-
-    root.mainloop()
+    switch_turn()
+    #root.mainloop()
 if __name__=="__main__":
     main()
 

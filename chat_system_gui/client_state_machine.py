@@ -128,6 +128,7 @@ class ClientSM:
                     peer = peer.strip()
                     if self.game_connect_to(peer) == True:
                         self.state = S_GAMING
+                        self.game_role = 'x'
                         self.out_msg += 'Connect to ' + peer + '. Play the game!\n\n'
                         self.out_msg += '-----------------------------------\n'
                     else:
@@ -153,6 +154,7 @@ class ClientSM:
                     self.out_msg += '. Play the game!\n\n'
                     self.out_msg += '------------------------------------\n'
                     self.state = S_GAMING
+                    self.game_role = 'o'
 
 #==============================================================================
 # Start chatting, 'bye' for quit
@@ -188,7 +190,7 @@ class ClientSM:
                 self.out_msg += menu
 
         elif self.state==S_GAMING:
-            game.main()
+            game.main(self.game_role,self.me,socket=self.s)
 
             # Display the menu again
             if self.state == S_LOGGEDIN:
