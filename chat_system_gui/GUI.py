@@ -17,7 +17,7 @@ from chat_utils import *
 from PIL import ImageTk,Image
 import json
 import base64
-import game_tic_tac_toe as game
+#import game_tic_tac_toe as game
 # GUI class for the chat
 
 

@@ -16,6 +16,7 @@ class ClientSM:
         self.s = s
         self.my_image = []
         self.peer_image = []
+        #self.game_state = False
 
     def set_state(self, state):
         self.state = state
@@ -128,6 +129,7 @@ class ClientSM:
                     peer = peer.strip()
                     if self.game_connect_to(peer) == True:
                         self.state = S_GAMING
+                        
                         self.game_role = 'x'
                         self.out_msg += 'Connect to ' + peer + '. Play the game!\n\n'
                         self.out_msg += '-----------------------------------\n'
@@ -140,7 +142,8 @@ class ClientSM:
                         self.out_msg+="4.Medium type can cover any small type of piece.\n"
                         self.out_msg+="5.Big type can cover any small or medium type.\n"
                         self.out_msg+="   Big type can not be covered.\n\n"
-                        game.main(self.game_role,self.me,socket=self.s)
+                        #game.main(self.game_role,self.me,socket=self.s)
+                        game.main(self,socket=self.s)
                         #return [self.out_msg]
                     else:
                         self.out_msg += 'Connection unsuccessful\n'
@@ -173,9 +176,11 @@ class ClientSM:
                     self.out_msg+="4.Medium type can cover any small type of piece.\n"
                     self.out_msg+="5.Big type can cover any small or medium type.\n"
                     self.out_msg+="   Big type can not be covered.\n\n"
+                    #self.game_state = True
                     self.state = S_GAMING
                     self.game_role = 'o'
-                    game.main(self.game_role,self.me,socket=self.s)
+                    #game.main(self.game_role,self.me,socket=self.s)
+                    game.main(self,socket=self.s)
                     #return [self.out_msg]
 
 #==============================================================================
@@ -211,8 +216,9 @@ class ClientSM:
             if self.state == S_LOGGEDIN:
                 self.out_msg += menu
 
-        elif self.state==S_GAMING:
-
+        elif self.state==S_GAMING: #not used, don't proc as game running
+            pass
+            #self.state = S_LOGGEDIN
             #if len(my_msg) > 0:     # my stuff going out
                 #self.my_image = ''
                 #mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg, "image":self.my_image}))
@@ -220,6 +226,8 @@ class ClientSM:
                     #self.disconnect()
                     #self.state = S_LOGGEDIN
                     #self.peer = ''
+                    #game.quit()
+                    #self.out_msg += 'Game end.\n'
                 #else:
                     #game.main(self.game_role,self.me,socket=self.s)
             #if len(peer_msg) > 0:    # peer's stuff, coming in
@@ -229,7 +237,10 @@ class ClientSM:
                     #self.out_msg += "(" + peer_msg["from"] + " joined to play)\n"
                 #elif peer_msg["action"] == "disconnect":
                     #self.state = S_LOGGEDIN
-            pass
+                    #game.quit()
+                    #self.out_msg += 'Game end.\n'
+            
+            
             
             # Display the menu again
             if self.state == S_LOGGEDIN:

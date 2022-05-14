@@ -5,18 +5,39 @@ from tkinter import messagebox
 from chat_utils import *
 import json
 import select
-def main(role,me,socket=None):
+
+#class Toplevel1(Toplevel):
+    #def init(self):
+        #super().__init__()
+    #def destroy1(self):
+        #self.destroy()
+
+
+def main(sm,socket=None):
+    global root
     root=Toplevel()
     root.title("Tic Tac Toe 2.0")
     root.geometry("450x700")
     global clicked, count,dict_x,dict_o,flg
     clicked,flg=True,False
+    role = sm.game_role
+    me = sm.me
     #my_turn = True
     count=0
     # dict to record the remaining chess pieces
     dict_x={"x":3,"xx":3,"xxx":3}
     dict_o={"o":3,"oo":3,"ooo":3}
     # Button里没有text时，选完piece之后的操作
+
+
+    def quit():
+        try:
+            root.destroy()
+            sm.state = S_LOGGEDIN
+            msg = json.dumps({"action" :"game", "from": "[" + me + "]" , "move":"quit"})
+            mysend(socket,msg)
+        except:
+            pass
 
     def move_send(move):
         msg = json.dumps({"action":"game", "from":"[" + me + "]", "move":move})
@@ -28,17 +49,25 @@ def main(role,me,socket=None):
         #print(self.msg)
         #if socket in read:
             peer_msg = myrecv(socket)
+        
             peer_msg = json.loads(peer_msg)
             print(peer_msg)
-        #while len(peer_msg) <= 0 and peer_msg['action'] != 'game':
-            while peer_msg['action'] != 'game':
+        
+            while len(peer_msg) <= 0 or peer_msg['action'] != 'game':
                 peer_msg = myrecv(socket)
                 peer_msg = json.loads(peer_msg)
                 print(peer_msg)
-                #if peer_msg['action'] == 'game':
-                    #break
+                try:
+                    if peer_msg['move'] == 'quit':
+                        quit()
+                        return
+                except:
+                    pass
+                print(peer_msg)
+                
             peer_chess = peer_msg['move'][1]
             peer_button = lb[peer_msg['move'][0]]
+            peer_msg = ''
             peer_move(peer_chess,peer_button)
 
     def peer_move(peer_chess,peer_button):
@@ -70,27 +99,32 @@ def main(role,me,socket=None):
         if clicked:
             if role == 'x':
                 turn_label['text'] = "It's x's turn"
-                enable_all_buttons()
-                my_turn = True
                 
+                my_turn = True
+                enable_all_buttons()
             else:
                 turn_label['text'] = "It's x's turn"
-                disable_all_buttons()
+                
                 my_turn = False
+                disable_all_buttons()
                 move_recv()
+                
         else:
             if role == 'x':
                 turn_label['text'] = "It's o's turn"
-                disable_all_buttons()
+                
                 my_turn = False
+                disable_all_buttons()
                 move_recv()
+                
             else:
                 turn_label['text'] = "It's o's turn"
-                enable_all_buttons()
+                
                 my_turn = True
+                enable_all_buttons()
     #switch_turn()
     def root1_b_small_click(root1_b,b):
-        global clicked,winner,count
+        global clicked,winner,count,root1
         #global clicked,winner,count
         if dict_x["x"]==0:
             messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
@@ -101,13 +135,14 @@ def main(role,me,socket=None):
             if my_turn:
                 move_send([lb.index(b),1])
             clicked = False
+            root1.destroy()
             switch_turn()
             count += 1
             check_if_win()
             if winner:
                 messagebox.showinfo("Game over!", "Congratulation! x wins!")  # 可能要把x变成player的名字
     def root1_b_medium_click(root1_b,b):
-        global clicked,winner,count
+        global clicked,winner,count,root1
         if dict_x["xx"]==0:
             messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
         else:
@@ -117,13 +152,14 @@ def main(role,me,socket=None):
             if my_turn:
                 move_send([lb.index(b),2])
             clicked = False
+            root1.destroy()
             switch_turn()
             count += 1
             check_if_win()
             if winner:
                 messagebox.showinfo("Game over!", "Congratulation! x wins!")  # 可能要把x变成player的名字
     def root1_b_big_click(root1_b,b):
-        global clicked,winner,count
+        global clicked,winner,count,root1
         if dict_x["xxx"]==0:
             messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
         else:
@@ -133,13 +169,14 @@ def main(role,me,socket=None):
             if my_turn:
                 move_send([lb.index(b),3])
             clicked = False
+            root1.destroy()
             switch_turn()
             count += 1
             check_if_win()
             if winner:
                 messagebox.showinfo("Game over!", "Congratulation! x wins!")  # 可能要把x变成player的名字
     def root2_b_small_click(root2_b,b):
-        global clicked,winner,count
+        global clicked,winner,count,root2
         if dict_o["o"]==0:
             messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
         else:
@@ -149,13 +186,14 @@ def main(role,me,socket=None):
             if my_turn:
                 move_send([lb.index(b),1])
             clicked = True
+            root2.destroy()
             switch_turn()
             count += 1
             check_if_win()
             if winner:
                 messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把x变成player的名字
     def root2_b_medium_click(root2_b,b):
-        global clicked,winner,count
+        global clicked,winner,count,root2
         if dict_o["oo"]==0:
             messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
         else:
@@ -165,13 +203,14 @@ def main(role,me,socket=None):
             if my_turn:
                 move_send([lb.index(b),2])
             clicked = True
+            root2.destroy()
             switch_turn()
             count += 1
             check_if_win()
             if winner:
                 messagebox.showinfo("Game over!", "Congratulation! o wins!")  # 可能要把o变成player的名字
     def root2_b_big_click(root2_b,b):
-        global clicked,winner,count
+        global clicked,winner,count,root2
         if dict_o["ooo"]==0:
             messagebox.showwarning("You can't choose this button!","You don't have this piece!\nChoose another one!")
         else:
@@ -181,6 +220,7 @@ def main(role,me,socket=None):
             if my_turn:
                 move_send([lb.index(b),3])
             clicked = True
+            root2.destroy()
             switch_turn()
             count += 1
             check_if_win()
@@ -343,6 +383,9 @@ def main(role,me,socket=None):
         elif flg:
             messagebox.showinfo("Tic Tac Toe 2.0","It's a tie!\nNobody wins the game!")
             disable_all_buttons()
+            quit()
+        if winner:
+            quit()
 
     # when click, what should the program do
     # x start first
@@ -366,6 +409,7 @@ def main(role,me,socket=None):
                 if my_turn:
                     move_send([lb.index(b),3])
                 clicked=False
+                switch_turn()
                 count+=1
                 flg=False
                 check_if_win()
@@ -378,6 +422,7 @@ def main(role,me,socket=None):
                 if my_turn:
                     move_send([lb.index(b),2])
                 clicked = False
+                switch_turn()
                 count += 1
                 flg=False
                 check_if_win()
@@ -400,8 +445,9 @@ def main(role,me,socket=None):
                     b["text"]="xx"
                     dict_x["xx"]-=1
                     if my_turn:
-                        move_send([lb.index(b),3])
+                        move_send([lb.index(b),2])
                 clicked=False
+                switch_turn()
                 count += 1
                 flg=False
                 check_if_win()
@@ -415,6 +461,7 @@ def main(role,me,socket=None):
                 if my_turn:
                     move_send([lb.index(b),3])
                 clicked=True
+                switch_turn()
                 count += 1
                 flg=False
                 check_if_win()
@@ -427,6 +474,7 @@ def main(role,me,socket=None):
                 if my_turn:
                     move_send([lb.index(b),2])
                 clicked = True
+                switch_turn()
                 count += 1
                 flg=False
                 check_if_win()
@@ -449,8 +497,9 @@ def main(role,me,socket=None):
                     b["text"]="oo"
                     dict_o["oo"]-=1
                     if my_turn:
-                        move_send([lb.index(b),3])
+                        move_send([lb.index(b),2])
                 clicked=True
+                switch_turn()
                 count += 1
                 flg=False
                 check_if_win()
@@ -465,6 +514,7 @@ def main(role,me,socket=None):
                 if my_turn:
                     move_send([lb.index(b),3])
                 clicked=False
+                switch_turn()
                 count += 1
                 check_if_win()
                 if winner:
@@ -482,6 +532,7 @@ def main(role,me,socket=None):
                 if my_turn:
                     move_send([lb.index(b),3])
                 clicked=True
+                switch_turn()
                 count += 1
                 flg=False
                 check_if_win()
@@ -494,6 +545,7 @@ def main(role,me,socket=None):
                 flg=True
         # Button里是空的
         elif clicked==True and b["text"]=="":
+            global root1
             root1=Toplevel()
             root1.title("Choose one piece!")
             root1_name_label = tkinter.Label(root1, text="Click the corresponding Button of the piece you want to choose!")
@@ -509,6 +561,7 @@ def main(role,me,socket=None):
             b_medium.grid(row=2, column=1)
             b_big.grid(row=2, column=2)
         elif clicked==False and b["text"]=='':
+            global root2
             root2=Toplevel()
             root2.title("Choose one piece!")
             root2_name_label = tkinter.Label(root2, text="Click the corresponding Button of the piece you want to choose!")
