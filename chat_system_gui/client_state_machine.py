@@ -131,6 +131,16 @@ class ClientSM:
                         self.game_role = 'x'
                         self.out_msg += 'Connect to ' + peer + '. Play the game!\n\n'
                         self.out_msg += '-----------------------------------\n'
+                        self.out_msg+="Rules of Tic Tac Toe 2.0\n"
+                        self.out_msg+="1.The conditions of victory are the same as\n"
+                        self.out_msg+="   ordinary tic-tac-toe\n"
+                        self.out_msg+="2.Each player has three types of pieces:\n"
+                        self.out_msg+="   small, medium and big\n"
+                        self.out_msg+="3.Each type has 3 pieces.\n"
+                        self.out_msg+="4.Medium type can cover any small type of piece.\n"
+                        self.out_msg+="5.Big type can cover any small or medium type.\n"
+                        self.out_msg+="   Big type can not be covered.\n\n"
+                    
                     else:
                         self.out_msg += 'Connection unsuccessful\n'
 
@@ -153,6 +163,15 @@ class ClientSM:
                     self.out_msg += 'You are connected with ' + self.peer
                     self.out_msg += '. Play the game!\n\n'
                     self.out_msg += '------------------------------------\n'
+                    self.out_msg+="Rules of Tic Tac Toe 2.0\n"
+                    self.out_msg+="1.The conditions of victory are the same as\n"
+                    self.out_msg+="   ordinary tic-tac-toe\n"
+                    self.out_msg+="2.Each player has three types of pieces:\n"
+                    self.out_msg+="   small, medium and big\n"
+                    self.out_msg+="3.Each type has 3 pieces.\n"
+                    self.out_msg+="4.Medium type can cover any small type of piece.\n"
+                    self.out_msg+="5.Big type can cover any small or medium type.\n"
+                    self.out_msg+="   Big type can not be covered.\n\n"
                     self.state = S_GAMING
                     self.game_role = 'o'
 
@@ -190,7 +209,22 @@ class ClientSM:
                 self.out_msg += menu
 
         elif self.state==S_GAMING:
-            game.main(self.game_role,self.me,socket=self.s)
+            if len(my_msg) > 0:     # my stuff going out
+                #self.my_image = ''
+                mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg, "image":self.my_image}))
+                if my_msg == 'bye':
+                    self.disconnect()
+                    self.state = S_LOGGEDIN
+                    self.peer = ''
+                else:
+                    game.main()
+            if len(peer_msg) > 0:    # peer's stuff, coming in
+                self.peer_image = []
+                peer_msg = json.loads(peer_msg)
+                if peer_msg["action"] == "game_connect":
+                    self.out_msg += "(" + peer_msg["from"] + " joined to play)\n"
+                elif peer_msg["action"] == "disconnect":
+                    self.state = S_LOGGEDIN
 
             # Display the menu again
             if self.state == S_LOGGEDIN:
