@@ -17,6 +17,7 @@ from chat_utils import *
 from PIL import ImageTk,Image
 import json
 import base64
+import game_tic_tac_toe as game
 # GUI class for the chat
 
 
@@ -304,25 +305,36 @@ class GUI:
     def proc(self):
         # print(self.msg)
         while True:
-            read, write, error = select.select([self.socket], [], [], 0)
-            peer_msg = []
-            # print(self.msg)
-            if self.socket in read:
-                peer_msg = self.recv()
-            if len(self.my_msg) > 0 or len(peer_msg) > 0:
-                # print(self.system_msg)
-                self.system_msg = self.sm.proc(self.my_msg, peer_msg)
-                self.my_msg = ""
-                self.textCons.config(state=NORMAL)
-                self.textCons.insert(END, self.system_msg + "\n\n")
-                self.textCons.config(state=DISABLED)
-                self.textCons.see(END)
-                self.sm.my_image = []
-                #downloads image
-                if len(self.sm.peer_image) > 0:
-                    self.saveImage(self.sm.peer_image)
-                    self.sm.peer_image = []
-                    #self.openImage()
+            if self.sm.state != S_GAMING:
+                read, write, error = select.select([self.socket], [], [], 0)
+                peer_msg = []
+                # print(self.msg)
+                if self.socket in read:
+                    peer_msg = self.recv()
+                if len(self.my_msg) > 0 or len(peer_msg) > 0:
+                    # print(self.system_msg)
+                    self.system_msg = self.sm.proc(self.my_msg, peer_msg)
+                    #try:
+                        #self.system_msg = self.system_msg[0]
+                        #print(self.system_msg)
+                        #game.main(self.sm.game_role,self.sm.me,socket=self.s)
+                    #except:
+                        #pass
+                    self.my_msg = ""
+                    self.textCons.config(state=NORMAL)
+                    self.textCons.insert(END, self.system_msg + "\n\n")
+                    self.textCons.config(state=DISABLED)
+                    self.textCons.see(END)
+                    self.sm.my_image = []
+                    #downloads image
+                    if len(self.sm.peer_image) > 0:
+                        self.saveImage(self.sm.peer_image)
+                        self.sm.peer_image = []
+                        #self.openImage()
+                    #peer_msg = json.loads(peer_msg)
+                    #if peer_msg['action'] == 'game':
+
+                
                     
 
     def run(self):
