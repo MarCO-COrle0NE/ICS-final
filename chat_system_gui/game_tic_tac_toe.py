@@ -36,6 +36,9 @@ def main(sm,socket=None):
             sm.state = S_LOGGEDIN
             msg = json.dumps({"action" :"game", "from": "[" + me + "]" , "move":"quit"})
             mysend(socket,msg)
+            #msg = json.dumps({"action":"exchange","from":"[" + me + "]" , "message" : "bye","image":''})
+            #mysend(socket,msg)
+            
         except:
             pass
 

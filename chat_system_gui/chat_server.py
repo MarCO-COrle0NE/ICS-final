@@ -224,7 +224,10 @@ class Server:
                     #self.indices[g].add_msg_and_index(said2)
                     mysend(to_sock, json.dumps(
                         {"action": "game", "from": msg["from"], "move": msg["move"]}))
-            
+                    if len(msg) > 0 and msg['move'] == 'quit':
+                        self.group.disconnect(from_name)
+                        the_guys = []
+                        
         else:
             # client died unexpectedly
             self.logout(from_sock)
