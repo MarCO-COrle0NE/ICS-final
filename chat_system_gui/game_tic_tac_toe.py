@@ -97,7 +97,10 @@ def main(sm,socket=None):
         count += 1
         check_if_win()
         if winner:
-            messagebox.showinfo("Game over!", "Congratulation! x wins!")
+            if role == 'x':
+                messagebox.showinfo("Game over!", "Congratulation! o wins!")
+            else:
+                messagebox.showinfo("Game over!", "Congratulation! x wins!")
 
     def switch_turn():
         global my_turn,clicked
